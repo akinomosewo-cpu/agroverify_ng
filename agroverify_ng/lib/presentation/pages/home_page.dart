@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gap/gap.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../blocs/app_bloc.dart';
+import '../widgets/language_switcher.dart';
+import '../widgets/page_transitions.dart';
+import 'dealers_page.dart';
+import 'profile_page.dart';
+import 'report_page.dart';
+import 'scanner_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -32,13 +40,19 @@ class _HomePageState extends State<HomePage> {
                   title: Row(children: [
                     Container(
                       width: 32, height: 32,
-                      decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(8)),
+                      decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(10)),
                       child: const Icon(Icons.agriculture_rounded, color: Colors.white, size: 17),
                     ),
                     const Gap(10),
-                    Text('AgroVerify NG', style: AppTextStyles.headlineMedium.copyWith(color: AppColors.textPrimary)),
+                    Text(l10n.appTitle, style: AppTextStyles.headlineLarge.copyWith(color: AppColors.textPrimary)),
                   ]),
                   actions: [
+                    const LanguageSwitcher(),
+                    IconButton(
+                      tooltip: l10n.profile,
+                      icon: const Icon(Icons.person_outline_rounded, color: AppColors.textPrimary),
+                      onPressed: () => Navigator.push(context, SlideUpRoute(page: const ProfilePage())),
+                    ),
                     IconButton(icon: const Icon(Icons.add_rounded, color: AppColors.primary), onPressed: () => _showAddSheet(context)),
                     const Gap(4),
                   ],
@@ -48,33 +62,48 @@ class _HomePageState extends State<HomePage> {
                   sliver: SliverList(delegate: SliverChildListDelegate([
                     const Gap(8),
                     Row(children: [
-                      _StatCard(label: 'Scans', value: state is AppLoaded ? state.items.length.toString() : '0', color: AppColors.primary).animate(delay: 50.ms).fadeIn().slideY(begin: 0.1),
+                      Expanded(child: _StatCard(label: 'Scans', value: state is AppLoaded ? state.items.length.toString() : '0', color: AppColors.primary).animate(delay: 50.ms).fadeIn().slideY(begin: 0.1)),
                       const Gap(12),
-                      _StatCard(label: 'Verified', value: state is AppLoaded ? state.items.where((i) => i['status'] == 'active').length.toString() : '0', color: AppColors.success).animate(delay: 100.ms).fadeIn().slideY(begin: 0.1),
+                      Expanded(child: _StatCard(label: 'Verified', value: state is AppLoaded ? state.items.where((i) => i['status'] == 'active').length.toString() : '0', color: AppColors.success).animate(delay: 100.ms).fadeIn().slideY(begin: 0.1)),
                       const Gap(12),
-                      _StatCard(label: 'Dealers', value: state is AppLoaded ? state.items.where((i) => i['status'] == 'pending').length.toString() : '0', color: AppColors.warning).animate(delay: 150.ms).fadeIn().slideY(begin: 0.1),
+                      Expanded(child: _StatCard(label: 'Dealers', value: state is AppLoaded ? state.items.where((i) => i['status'] == 'pending').length.toString() : '0', color: AppColors.warning).animate(delay: 150.ms).fadeIn().slideY(begin: 0.1)),
                     ]),
-                    const Gap(24),
-                    Text('What you can do', style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
-                    const Gap(12),
-                    _FeatureCard(icon: Icons.check_circle_outline_rounded, label: 'Scan inputs to verify', color: AppColors.primary).animate(delay: 200.ms).fadeIn().slideX(begin: -0.1),
+                    const Gap(28),
+                    Text(l10n.whatYouCanDo, style: AppTextStyles.headlineLarge.copyWith(color: AppColors.textPrimary)),
+                    const Gap(14),
+                    _FeatureCard(
+                      icon: Icons.check_circle_outline_rounded,
+                      label: l10n.scanInputs,
+                      color: AppColors.primary,
+                      onTap: () => Navigator.push(context, SlideUpRoute(page: const ScannerPage())),
+                    ).animate(delay: 200.ms).fadeIn().slideX(begin: -0.1),
                     const Gap(8),
-                    _FeatureCard(icon: Icons.bar_chart_rounded, label: 'Rate agro-dealers', color: AppColors.success).animate(delay: 250.ms).fadeIn().slideX(begin: -0.1),
+                    _FeatureCard(
+                      icon: Icons.bar_chart_rounded,
+                      label: l10n.rateDealers,
+                      color: AppColors.success,
+                      onTap: () => Navigator.push(context, SlideUpRoute(page: DealersPage())),
+                    ).animate(delay: 250.ms).fadeIn().slideX(begin: -0.1),
                     const Gap(8),
-                    _FeatureCard(icon: Icons.send_rounded, label: 'Report fake products', color: AppColors.warning).animate(delay: 300.ms).fadeIn().slideX(begin: -0.1),
-                    const Gap(24),
-                    Text('Recent Activity', style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
-                    const Gap(12),
+                    _FeatureCard(
+                      icon: Icons.send_rounded,
+                      label: l10n.reportFake,
+                      color: AppColors.warning,
+                      onTap: () => Navigator.push(context, SlideUpRoute(page: const ReportPage())),
+                    ).animate(delay: 300.ms).fadeIn().slideX(begin: -0.1),
+                    const Gap(28),
+                    Text(l10n.recentActivity, style: AppTextStyles.headlineLarge.copyWith(color: AppColors.textPrimary)),
+                    const Gap(14),
                     if (state is AppLoaded && state.items.isEmpty)
                       Container(
                         padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border)),
+                        decoration: BoxDecoration(color: AppColors.surfaceMuted, borderRadius: BorderRadius.circular(24)),
                         child: Column(children: [
-                          Icon(Icons.agriculture_rounded, color: AppColors.textTertiary, size: 40),
+                          Icon(Icons.agriculture_rounded, color: AppColors.primary, size: 44),
                           const Gap(12),
-                          Text('Nothing here yet', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+                          Text(l10n.nothingHereYet, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
                           const Gap(4),
-                          Text('Tap + to get started', style: AppTextStyles.labelMedium.copyWith(color: AppColors.textTertiary)),
+                          Text(l10n.tapToStart, style: AppTextStyles.labelMedium.copyWith(color: AppColors.textTertiary)),
                         ]),
                       ).animate().fadeIn(delay: 350.ms),
                     if (state is AppLoaded)
@@ -103,7 +132,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
       builder: (_) => BlocProvider.value(value: context.read<AppBloc>(), child: const _AddSheet()),
     );
   }
@@ -114,16 +143,14 @@ class _StatCard extends StatelessWidget {
   final Color color;
   const _StatCard({required this.label, required this.value, required this.color});
   @override
-  Widget build(BuildContext context) => Expanded(
-    child: Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
-      child: Column(children: [
-        Text(value, style: AppTextStyles.displaySmall.copyWith(color: color, fontWeight: FontWeight.w800)),
-        const Gap(2),
-        Text(label, style: AppTextStyles.labelSmall.copyWith(color: AppColors.textSecondary), textAlign: TextAlign.center),
-      ]),
-    ),
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+    decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(22), boxShadow: AppColors.cardShadow),
+    child: Column(children: [
+      Text(value, style: AppTextStyles.displaySmall.copyWith(color: color)),
+      const Gap(4),
+      Text(label, style: AppTextStyles.labelSmall.copyWith(color: AppColors.textSecondary), textAlign: TextAlign.center),
+    ]),
   );
 }
 
@@ -131,18 +158,23 @@ class _FeatureCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  const _FeatureCard({required this.icon, required this.label, required this.color});
+  final VoidCallback? onTap;
+  const _FeatureCard({required this.icon, required this.label, required this.color, this.onTap});
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
-    child: Row(children: [
-      Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color: color, size: 16)),
-      const Gap(14),
-      Expanded(child: Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary))),
-      const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary, size: 18),
-    ]),
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(20),
+    child: Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(20), boxShadow: AppColors.cardShadow),
+      child: Row(children: [
+        Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.14), borderRadius: BorderRadius.circular(14)),
+          child: Icon(icon, color: color, size: 20)),
+        const Gap(14),
+        Expanded(child: Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
+        const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary, size: 20),
+      ]),
+    ),
   );
 }
 
@@ -157,23 +189,23 @@ class _ItemTile extends StatelessWidget {
       key: Key(title + DateTime.now().toString()),
       direction: DismissDirection.endToStart,
       background: Container(
-        alignment: Alignment.centerRight, padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(color: AppColors.danger.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+        alignment: Alignment.centerRight, padding: const EdgeInsets.only(right: 24),
+        decoration: BoxDecoration(color: AppColors.danger.withOpacity(0.15), borderRadius: BorderRadius.circular(20)),
         child: const Icon(Icons.delete_outline_rounded, color: AppColors.danger),
       ),
       onDismissed: (_) => onDelete(),
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(20), boxShadow: AppColors.cardShadow),
         child: Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(title, style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
             if (subtitle.isNotEmpty) Text(subtitle, style: AppTextStyles.labelMedium.copyWith(color: AppColors.textSecondary)),
           ])),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: statusColor.withOpacity(0.12), borderRadius: BorderRadius.circular(6)),
-            child: Text(status, style: AppTextStyles.labelSmall.copyWith(color: statusColor, fontWeight: FontWeight.w700)),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(color: statusColor.withOpacity(0.14), borderRadius: BorderRadius.circular(100)),
+            child: Text(status, style: AppTextStyles.labelSmall.copyWith(color: statusColor)),
           ),
         ]),
       ),
