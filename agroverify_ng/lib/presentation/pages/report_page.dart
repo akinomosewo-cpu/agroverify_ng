@@ -127,7 +127,7 @@ class _ReportPageState extends State<ReportPage> {
               if (_photoPath != null) ...[
                 const Gap(10),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(20),
                   child: Image.file(File(_photoPath!), height: 160, width: double.infinity, fit: BoxFit.cover),
                 ),
               ],
@@ -174,18 +174,22 @@ class _ActionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: AppColors.cardShadow,
         ),
         child: Row(children: [
-          Icon(icon, color: AppColors.primary, size: 20),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+            child: Icon(icon, color: AppColors.primary, size: 20),
+          ),
           const Gap(14),
-          Expanded(child: Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary))),
+          Expanded(child: Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
           if (trailing != null) trailing!,
         ]),
       ),

@@ -84,7 +84,7 @@ class _ScannerPageState extends State<ScannerPage> {
               children: [
                 if (_cameraActive)
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(24),
                     child: SizedBox(
                       height: 260,
                       child: MobileScanner(
@@ -97,18 +97,22 @@ class _ScannerPageState extends State<ScannerPage> {
                   GestureDetector(
                     onTap: _toggleCamera,
                     child: Container(
-                      height: 180,
+                      height: 200,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.border),
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: AppColors.cardShadow,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.qr_code_scanner_rounded, color: AppColors.primary, size: 40),
-                          const Gap(8),
-                          Text(l10n.scan, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), shape: BoxShape.circle),
+                            child: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 36),
+                          ),
+                          const Gap(12),
+                          Text(l10n.scan, style: AppTextStyles.headlineSmall.copyWith(color: Colors.white)),
                         ],
                       ),
                     ),
@@ -179,27 +183,35 @@ class _ResultCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.4)),
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: AppColors.cardShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              Icon(icon, color: color),
-              const Gap(10),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: color.withOpacity(0.14), shape: BoxShape.circle),
+                child: Icon(icon, color: color),
+              ),
+              const Gap(12),
               Expanded(
                 child: Text(message, style: AppTextStyles.headlineSmall.copyWith(color: color)),
               ),
             ]),
             if (result.productName != null) ...[
-              const Gap(12),
+              const Gap(14),
               Text('${result.productName} · ${result.brand ?? ''}',
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
+                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
             ],
-            const Gap(6),
-            Text(result.code, style: AppTextStyles.labelMedium.copyWith(color: AppColors.textSecondary)),
+            const Gap(8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(color: AppColors.surfaceMuted, borderRadius: BorderRadius.circular(100)),
+              child: Text(result.code, style: AppTextStyles.labelMedium.copyWith(color: AppColors.textSecondary)),
+            ),
           ],
         ),
       ),

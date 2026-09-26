@@ -38,11 +38,11 @@ class _HomePageState extends State<HomePage> {
                   title: Row(children: [
                     Container(
                       width: 32, height: 32,
-                      decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(8)),
+                      decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(10)),
                       child: const Icon(Icons.agriculture_rounded, color: Colors.white, size: 17),
                     ),
                     const Gap(10),
-                    Text(l10n.appTitle, style: AppTextStyles.headlineMedium.copyWith(color: AppColors.textPrimary)),
+                    Text(l10n.appTitle, style: AppTextStyles.headlineLarge.copyWith(color: AppColors.textPrimary)),
                   ]),
                   actions: [
                     const LanguageSwitcher(),
@@ -61,9 +61,9 @@ class _HomePageState extends State<HomePage> {
                       const Gap(12),
                       Expanded(child: _StatCard(label: 'Dealers', value: state is AppLoaded ? state.items.where((i) => i['status'] == 'pending').length.toString() : '0', color: AppColors.warning).animate(delay: 150.ms).fadeIn().slideY(begin: 0.1)),
                     ]),
-                    const Gap(24),
-                    Text(l10n.whatYouCanDo, style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
-                    const Gap(12),
+                    const Gap(28),
+                    Text(l10n.whatYouCanDo, style: AppTextStyles.headlineLarge.copyWith(color: AppColors.textPrimary)),
+                    const Gap(14),
                     _FeatureCard(
                       icon: Icons.check_circle_outline_rounded,
                       label: l10n.scanInputs,
@@ -84,15 +84,15 @@ class _HomePageState extends State<HomePage> {
                       color: AppColors.warning,
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportPage())),
                     ).animate(delay: 300.ms).fadeIn().slideX(begin: -0.1),
-                    const Gap(24),
-                    Text(l10n.recentActivity, style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
-                    const Gap(12),
+                    const Gap(28),
+                    Text(l10n.recentActivity, style: AppTextStyles.headlineLarge.copyWith(color: AppColors.textPrimary)),
+                    const Gap(14),
                     if (state is AppLoaded && state.items.isEmpty)
                       Container(
                         padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border)),
+                        decoration: BoxDecoration(color: AppColors.surfaceMuted, borderRadius: BorderRadius.circular(24)),
                         child: Column(children: [
-                          Icon(Icons.agriculture_rounded, color: AppColors.textTertiary, size: 40),
+                          Icon(Icons.agriculture_rounded, color: AppColors.primary, size: 44),
                           const Gap(12),
                           Text(l10n.nothingHereYet, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
                           const Gap(4),
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
       builder: (_) => BlocProvider.value(value: context.read<AppBloc>(), child: const _AddSheet()),
     );
   }
@@ -137,11 +137,11 @@ class _StatCard extends StatelessWidget {
   const _StatCard({required this.label, required this.value, required this.color});
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
+    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+    decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(22), boxShadow: AppColors.cardShadow),
     child: Column(children: [
-      Text(value, style: AppTextStyles.displaySmall.copyWith(color: color, fontWeight: FontWeight.w800)),
-      const Gap(2),
+      Text(value, style: AppTextStyles.displaySmall.copyWith(color: color)),
+      const Gap(4),
       Text(label, style: AppTextStyles.labelSmall.copyWith(color: AppColors.textSecondary), textAlign: TextAlign.center),
     ]),
   );
@@ -156,16 +156,16 @@ class _FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
-    borderRadius: BorderRadius.circular(12),
+    borderRadius: BorderRadius.circular(20),
     child: Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(20), boxShadow: AppColors.cardShadow),
       child: Row(children: [
-        Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
-          child: Icon(icon, color: color, size: 16)),
+        Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.14), borderRadius: BorderRadius.circular(14)),
+          child: Icon(icon, color: color, size: 20)),
         const Gap(14),
-        Expanded(child: Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary))),
-        const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary, size: 18),
+        Expanded(child: Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
+        const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary, size: 20),
       ]),
     ),
   );
@@ -182,23 +182,23 @@ class _ItemTile extends StatelessWidget {
       key: Key(title + DateTime.now().toString()),
       direction: DismissDirection.endToStart,
       background: Container(
-        alignment: Alignment.centerRight, padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(color: AppColors.danger.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+        alignment: Alignment.centerRight, padding: const EdgeInsets.only(right: 24),
+        decoration: BoxDecoration(color: AppColors.danger.withOpacity(0.15), borderRadius: BorderRadius.circular(20)),
         child: const Icon(Icons.delete_outline_rounded, color: AppColors.danger),
       ),
       onDismissed: (_) => onDelete(),
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(20), boxShadow: AppColors.cardShadow),
         child: Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(title, style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
             if (subtitle.isNotEmpty) Text(subtitle, style: AppTextStyles.labelMedium.copyWith(color: AppColors.textSecondary)),
           ])),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: statusColor.withOpacity(0.12), borderRadius: BorderRadius.circular(6)),
-            child: Text(status, style: AppTextStyles.labelSmall.copyWith(color: statusColor, fontWeight: FontWeight.w700)),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(color: statusColor.withOpacity(0.14), borderRadius: BorderRadius.circular(100)),
+            child: Text(status, style: AppTextStyles.labelSmall.copyWith(color: statusColor)),
           ),
         ]),
       ),
