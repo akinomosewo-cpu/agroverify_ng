@@ -1,0 +1,208 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import '../../core/localization/app_localizations.dart';
+import '../../core/services/verification_service.dart';
+import '../../core/services/voice_service.dart';
+import '../../core/theme/app_theme.dart';
+import '../blocs/verification/verification_bloc.dart';
+
+/// Scan or type a product code, then verify it against the (stubbed)
+/// SEEDCODEX-style backend via [VerificationBloc].
+class ScannerPage extends StatefulWidget {
+  const ScannerPage({super.key});
+  @override
+  State<ScannerPage> createState() => _ScannerPageState();
+}
+
+class _ScannerPageState extends State<ScannerPage> {
+  final _codeController = TextEditingController();
+  MobileScannerController? _scannerController;
+  bool _cameraActive = false;
+  final _voiceService = const VoiceService();
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    _scannerController?.dispose();
+    super.dispose();
+  }
+
+  void _toggleCamera() {
+    setState(() {
+      _cameraActive = !_cameraActive;
+      if (_cameraActive) {
+        _scannerController ??= MobileScannerController();
+      }
+    });
+  }
+
+  void _onDetect(BarcodeCapture capture) {
+    final barcode = capture.barcodes.isNotEmpty ? capture.barcodes.first : null;
+    final value = barcode?.rawValue;
+    if (value == null || value.isEmpty) return;
+    _codeController.text = value;
+    context.read<VerificationBloc>().add(CodeSubmitted(value));
+    setState(() => _cameraActive = false);
+  }
+
+  void _submitTypedCode() {
+    final code = _codeController.text.trim();
+    if (code.isEmpty) return;
+    context.read<VerificationBloc>().add(CodeSubmitted(code));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Semantics(
+          header: true,
+          child: Text(l10n.scan),
+        ),
+        actions: [
+          IconButton(
+            tooltip: l10n.listenToPage,
+            icon: const Icon(Icons.volume_up_rounded),
+            onPressed: () => _voiceService.speak(l10n.scan),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: BlocConsumer<VerificationBloc, VerificationState>(
+          listener: (context, state) {
+            if (state is VerificationSuccess) {
+              _voiceService.speak(_statusMessage(state.result, l10n));
+            }
+          },
+          builder: (context, state) {
+            return ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                if (_cameraActive)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: SizedBox(
+                      height: 260,
+                      child: MobileScanner(
+                        controller: _scannerController,
+                        onDetect: _onDetect,
+                      ),
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTap: _toggleCamera,
+                    child: Container(
+                      height: 180,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.qr_code_scanner_rounded, color: AppColors.primary, size: 40),
+                          const Gap(8),
+                          Text(l10n.scan, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (_cameraActive)
+                  TextButton(onPressed: _toggleCamera, child: const Text('Close camera')),
+                const Gap(20),
+                TextField(
+                  controller: _codeController,
+                  textCapitalization: TextCapitalization.characters,
+                  decoration: InputDecoration(hintText: l10n.enterCode),
+                  onSubmitted: (_) => _submitTypedCode(),
+                ),
+                const Gap(12),
+                ElevatedButton(onPressed: _submitTypedCode, child: Text(l10n.verify)),
+                const Gap(24),
+                if (state is VerificationInProgress) const Center(child: CircularProgressIndicator()),
+                if (state is VerificationSuccess) _ResultCard(result: state.result, l10n: l10n),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  String _statusMessage(VerificationResult result, AppLocalizations l10n) {
+    switch (result.status) {
+      case VerificationStatus.genuine:
+        return l10n.verifiedGenuine;
+      case VerificationStatus.counterfeit:
+        return l10n.suspectedFake;
+      case VerificationStatus.unknown:
+        return l10n.unknownCode;
+    }
+  }
+}
+
+class _ResultCard extends StatelessWidget {
+  final VerificationResult result;
+  final AppLocalizations l10n;
+  const _ResultCard({required this.result, required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color color;
+    final IconData icon;
+    final String message;
+    switch (result.status) {
+      case VerificationStatus.genuine:
+        color = AppColors.success;
+        icon = Icons.verified_rounded;
+        message = l10n.verifiedGenuine;
+        break;
+      case VerificationStatus.counterfeit:
+        color = AppColors.danger;
+        icon = Icons.dangerous_rounded;
+        message = l10n.suspectedFake;
+        break;
+      case VerificationStatus.unknown:
+        color = AppColors.warning;
+        icon = Icons.help_outline_rounded;
+        message = l10n.unknownCode;
+        break;
+    }
+    return Semantics(
+      liveRegion: true,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.4)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Icon(icon, color: color),
+              const Gap(10),
+              Expanded(
+                child: Text(message, style: AppTextStyles.headlineSmall.copyWith(color: color)),
+              ),
+            ]),
+            if (result.productName != null) ...[
+              const Gap(12),
+              Text('${result.productName} · ${result.brand ?? ''}',
+                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
+            ],
+            const Gap(6),
+            Text(result.code, style: AppTextStyles.labelMedium.copyWith(color: AppColors.textSecondary)),
+          ],
+        ),
+      ),
+    );
+  }
+}
