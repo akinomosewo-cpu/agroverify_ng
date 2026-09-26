@@ -4,6 +4,9 @@ import 'package:agroverify_ng/main.dart';
 void main() {
   testWidgets('App starts on the home page and shows key sections', (WidgetTester tester) async {
     await tester.pumpWidget(const AgroVerifyApp());
+    // The app briefly shows an animated splash screen before landing on the
+    // home page — advance past it before asserting on home page content.
+    await tester.pump(const Duration(milliseconds: 1500));
     await tester.pumpAndSettle();
 
     expect(find.text('AgroVerify NG'), findsOneWidget);

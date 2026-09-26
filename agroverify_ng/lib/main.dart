@@ -5,10 +5,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/blocs/app_bloc.dart';
+import 'presentation/blocs/auth/auth_cubit.dart';
 import 'presentation/blocs/locale/locale_cubit.dart';
 import 'presentation/blocs/report/report_bloc.dart';
 import 'presentation/blocs/verification/verification_bloc.dart';
-import 'presentation/pages/home_page.dart';
+import 'presentation/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class AgroVerifyApp extends StatelessWidget {
         BlocProvider(create: (_) => LocaleCubit()),
         BlocProvider(create: (_) => VerificationBloc()),
         BlocProvider(create: (_) => ReportBloc()),
+        BlocProvider(create: (_) => AuthCubit()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -49,7 +51,7 @@ class AgroVerifyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            home: const HomePage(),
+            home: const SplashPage(),
           );
         },
       ),

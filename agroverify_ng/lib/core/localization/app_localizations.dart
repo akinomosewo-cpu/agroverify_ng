@@ -154,6 +154,91 @@ class AppLocalizations {
       'ha': 'Saurara',
       'yo': 'Tẹ́tí sílẹ̀',
     },
+    'profile': {
+      'en': 'Profile',
+      'ha': 'Bayanan ka',
+      'yo': 'Àkọlé rẹ',
+    },
+    'login': {
+      'en': 'Log in',
+      'ha': 'Shiga',
+      'yo': 'Wọlé',
+    },
+    'signUp': {
+      'en': 'Sign up',
+      'ha': 'Yi rijista',
+      'yo': 'Forúkọsílẹ̀',
+    },
+    'logout': {
+      'en': 'Log out',
+      'ha': 'Fita',
+      'yo': 'Jáde',
+    },
+    'createAccount': {
+      'en': 'Create account',
+      'ha': 'Ƙirƙiri asusu',
+      'yo': 'Ṣẹ̀dá àkántì',
+    },
+    'fullName': {
+      'en': 'Full name',
+      'ha': 'Cikakken suna',
+      'yo': 'Orúkọ kíkún',
+    },
+    'phoneNumber': {
+      'en': 'Phone number',
+      'ha': 'Lambar waya',
+      'yo': 'Nọ́mbà fóònù',
+    },
+    'password': {
+      'en': 'Password',
+      'ha': 'Kalmar sirri',
+      'yo': 'Ọ̀rọ̀ìpamọ́',
+    },
+    'welcomeBack': {
+      'en': 'Welcome back',
+      'ha': 'Barka da dawowa',
+      'yo': 'Kábọ̀ padà',
+    },
+    'guestUser': {
+      'en': 'You are browsing as a guest',
+      'ha': 'Kana amfani da manhaja a matsayin baƙo',
+      'yo': 'O ń lo ohun èlò gẹ́gẹ́ bí àlejò',
+    },
+    'signUpToSaveHistory': {
+      'en': 'Create a free account to save your scan and report history on this phone.',
+      'ha': 'Ƙirƙiri asusu kyauta don adana tarihin dubawa da rahotanninka a wayarka.',
+      'yo': 'Ṣẹ̀dá àkántì ọ̀fẹ́ láti fi ìtàn ìṣàyẹ̀wò àti ìjábọ̀ rẹ pamọ́ sórí fóònù yìí.',
+    },
+    'dontHaveAccount': {
+      'en': "New here? Create an account",
+      'ha': 'Sabo ne a nan? Ƙirƙiri asusu',
+      'yo': 'Ṣé o ṣẹ̀ṣẹ̀ dé? Ṣẹ̀dá àkántì',
+    },
+    'alreadyHaveAccount': {
+      'en': 'Already have an account? Log in',
+      'ha': 'Kana da asusu tuni? Shiga',
+      'yo': 'Ṣé o ti ní àkántì? Wọlé',
+    },
+    'invalidAuthInput': {
+      'en': 'Please check your details — password must be at least 4 characters.',
+      'ha': 'Da fatan za a duba bayaninka — kalmar sirri dole ta zama aƙalla haruffa 4.',
+      'yo': 'Jọ̀wọ́ ṣàyẹ̀wò àwọn àlàyé rẹ — ọ̀rọ̀ìpamọ́ gbọ́dọ̀ ní ó kéré tán àmì mẹ́rin.',
+    },
+    'phoneAlreadyRegistered': {
+      'en': 'This phone number is already registered on this device.',
+      'ha': 'An riga an yi rijistar wannan lambar waya a wannan na\'urar.',
+      'yo': 'A ti forúkọsílẹ̀ nọ́mbà fóònù yìí tẹ́lẹ̀ lórí ẹ̀rọ yìí.',
+    },
+    'accountNotFound': {
+      'en': 'No account found for this phone number on this device.',
+      'ha': 'Ba a sami asusu don wannan lambar waya a wannan na\'urar ba.',
+      'yo': 'A kò rí àkántì kankan fún nọ́mbà fóònù yìí lórí ẹ̀rọ yìí.',
+    },
+    'wrongPassword': {
+      'en': 'Incorrect password.',
+      'ha': 'Kalmar sirri ba daidai ba ce.',
+      'yo': 'Ọ̀rọ̀ìpamọ́ kò tọ́.',
+    },
   };
 
   String t(String key) {
@@ -188,6 +273,23 @@ class AppLocalizations {
   String get trusted => t('trusted');
   String get untrustworthy => t('untrustworthy');
   String get listenToPage => t('listenToPage');
+  String get profile => t('profile');
+  String get login => t('login');
+  String get signUp => t('signUp');
+  String get logout => t('logout');
+  String get createAccount => t('createAccount');
+  String get fullName => t('fullName');
+  String get phoneNumber => t('phoneNumber');
+  String get password => t('password');
+  String get welcomeBack => t('welcomeBack');
+  String get guestUser => t('guestUser');
+  String get signUpToSaveHistory => t('signUpToSaveHistory');
+  String get dontHaveAccount => t('dontHaveAccount');
+  String get alreadyHaveAccount => t('alreadyHaveAccount');
+  String get invalidAuthInput => t('invalidAuthInput');
+  String get phoneAlreadyRegistered => t('phoneAlreadyRegistered');
+  String get accountNotFound => t('accountNotFound');
+  String get wrongPassword => t('wrongPassword');
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

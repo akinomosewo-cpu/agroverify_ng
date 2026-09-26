@@ -6,7 +6,9 @@ import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../blocs/app_bloc.dart';
 import '../widgets/language_switcher.dart';
+import '../widgets/page_transitions.dart';
 import 'dealers_page.dart';
+import 'profile_page.dart';
 import 'report_page.dart';
 import 'scanner_page.dart';
 
@@ -46,6 +48,11 @@ class _HomePageState extends State<HomePage> {
                   ]),
                   actions: [
                     const LanguageSwitcher(),
+                    IconButton(
+                      tooltip: l10n.profile,
+                      icon: const Icon(Icons.person_outline_rounded, color: AppColors.textPrimary),
+                      onPressed: () => Navigator.push(context, SlideUpRoute(page: const ProfilePage())),
+                    ),
                     IconButton(icon: const Icon(Icons.add_rounded, color: AppColors.primary), onPressed: () => _showAddSheet(context)),
                     const Gap(4),
                   ],
@@ -68,21 +75,21 @@ class _HomePageState extends State<HomePage> {
                       icon: Icons.check_circle_outline_rounded,
                       label: l10n.scanInputs,
                       color: AppColors.primary,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScannerPage())),
+                      onTap: () => Navigator.push(context, SlideUpRoute(page: const ScannerPage())),
                     ).animate(delay: 200.ms).fadeIn().slideX(begin: -0.1),
                     const Gap(8),
                     _FeatureCard(
                       icon: Icons.bar_chart_rounded,
                       label: l10n.rateDealers,
                       color: AppColors.success,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DealersPage())),
+                      onTap: () => Navigator.push(context, SlideUpRoute(page: DealersPage())),
                     ).animate(delay: 250.ms).fadeIn().slideX(begin: -0.1),
                     const Gap(8),
                     _FeatureCard(
                       icon: Icons.send_rounded,
                       label: l10n.reportFake,
                       color: AppColors.warning,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportPage())),
+                      onTap: () => Navigator.push(context, SlideUpRoute(page: const ReportPage())),
                     ).animate(delay: 300.ms).fadeIn().slideX(begin: -0.1),
                     const Gap(28),
                     Text(l10n.recentActivity, style: AppTextStyles.headlineLarge.copyWith(color: AppColors.textPrimary)),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -87,9 +88,14 @@ class _ScannerPageState extends State<ScannerPage> {
                     borderRadius: BorderRadius.circular(24),
                     child: SizedBox(
                       height: 260,
-                      child: MobileScanner(
-                        controller: _scannerController,
-                        onDetect: _onDetect,
+                      child: Stack(
+                        children: [
+                          MobileScanner(
+                            controller: _scannerController,
+                            onDetect: _onDetect,
+                          ),
+                          const Positioned.fill(child: _ScanLineOverlay()),
+                        ],
                       ),
                     ),
                   )
@@ -110,7 +116,9 @@ class _ScannerPageState extends State<ScannerPage> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), shape: BoxShape.circle),
                             child: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 36),
-                          ),
+                          )
+                              .animate(onPlay: (c) => c.repeat(reverse: true))
+                              .scaleXY(end: 1.08, duration: 900.ms, curve: Curves.easeInOut),
                           const Gap(12),
                           Text(l10n.scan, style: AppTextStyles.headlineSmall.copyWith(color: Colors.white)),
                         ],
@@ -130,7 +138,11 @@ class _ScannerPageState extends State<ScannerPage> {
                 ElevatedButton(onPressed: _submitTypedCode, child: Text(l10n.verify)),
                 const Gap(24),
                 if (state is VerificationInProgress) const Center(child: CircularProgressIndicator()),
-                if (state is VerificationSuccess) _ResultCard(result: state.result, l10n: l10n),
+                if (state is VerificationSuccess)
+                  _ResultCard(result: state.result, l10n: l10n)
+                      .animate()
+                      .fadeIn(duration: 350.ms, curve: Curves.easeOut)
+                      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 350.ms, curve: Curves.easeOutBack),
               ],
             );
           },
@@ -148,6 +160,38 @@ class _ScannerPageState extends State<ScannerPage> {
       case VerificationStatus.unknown:
         return l10n.unknownCode;
     }
+  }
+}
+
+/// A thin highlight line that sweeps down the camera preview while the
+/// scanner is active, echoing a real barcode/QR scanner's scan beam.
+class _ScanLineOverlay extends StatelessWidget {
+  const _ScanLineOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+          height: 3,
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary.withOpacity(0),
+                AppColors.primary,
+                AppColors.primary.withOpacity(0),
+              ],
+            ),
+            boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.6), blurRadius: 8)],
+          ),
+        )
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .moveY(begin: 0, end: 240, duration: 1600.ms, curve: Curves.easeInOut),
+      ),
+    );
   }
 }
 
